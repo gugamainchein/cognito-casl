@@ -1,4 +1,4 @@
-# Cognito and CASL
+# Cognito & CASL
 
 Existe muita dúvida de como gerenciar de forma eficiente os usuários das aplicações, sem ser naquele arcaico e velho formato do banco de dados. Além disso, uma das grandes preocupações que permeia esse dilema de federação, baseia-se em como fazer isso sem expor credenciais de segurança.
 
@@ -25,6 +25,7 @@ Os principais recursos que irão nos apoiar no gerenciamento dos usuários de no
   - Recurso responsável pela federação dos usuários.
 
 Veja a arquitetura abaixo para esclarecer as conexões entre os recursos:
+
 ![Arquitetura AWS](https://github.com/gugamainchein/cognito-casl/blob/master/docs/arquitetura/arquitetura.png?raw=true)
 
 ## Custo envolvido
@@ -51,7 +52,7 @@ Criando a infraestrutura no CloudFormation:
 Clonando o repositório e entrando na pasta:
 
 ```sh
-git clone https://
+git clone https://github.com/gugamainchein/cognito-casl
 cd cognito-casl
 ```
 
@@ -91,7 +92,7 @@ Gustavo Mainchein – [@gugamainchein](https://twitter.com/dbader_org) – gusta
 
 ## Faça sua contribuição
 
-1. Realise o fork do projeto (<https://github.com/yourname/yourproject/fork>)
+1. Realise o fork do projeto (<https://github.com/gugamainchein/cognito-casl/fork>)
 2. Crie a nova feature em uma branch (`git checkout -b feature/fooBar`)
 3. Faça o commit das suas mudanças (`git commit -am 'Add some fooBar'`)
 4. Realize o push para a branch (`git push origin feature/fooBar`)
