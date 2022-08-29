@@ -105,7 +105,7 @@ Gustavo Mainchein – [@gugamainchein](https://twitter.com/dbader_org) – gusta
 
 ## Faça sua contribuição
 
-1. Realise o fork do projeto (<https://github.com/gugamainchein/cognito-casl/fork>)
+1. Realize o fork do projeto (<https://github.com/gugamainchein/cognito-casl/fork>)
 2. Crie a nova feature em uma branch (`git checkout -b feature/fooBar`)
 3. Faça o commit das suas mudanças (`git commit -am 'Add some fooBar'`)
 4. Realize o push para a branch (`git push origin feature/fooBar`)
