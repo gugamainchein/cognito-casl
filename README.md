@@ -104,4 +104,4 @@ Gustavo Mainchein – [@gugamainchein](https://twitter.com/dbader_org) – gusta
 [npm-url]: https://docs.npmjs.com/cli/v8
 [nodejs]: https://nodejs.org/en/
 [calc-aws]: https://calculator.aws/#/estimate?id=82b1ba2039c4ad90dd1930c3cbcf00f3f3b521cd
-[infra-path]: https://us-east-1.console.aws.amazon.com/cloudformation/home?region=us-east#/stacks/create/review?templateURL=https://github.com/gugamainchein/cognito-casl/docs/iac/template.yml&stackName=cognito-casl
+[infra-path]: https://us-east-1.console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/create/review?templateURL=https://github.com/gugamainchein/cognito-casl/docs/iac/template.yml&stackName=cognito-casl
