@@ -33,7 +33,7 @@ Veja a arquitetura abaixo para esclarecer as conexões entre os recursos:
 Como você deve saber, os recursos AWS cobram por utilização e é importante trazermos essa visão de custo envolvido na arquitetura apresentada, pois esse tema pode tornar-se um fator de tomada de decisão da viabilidade técnica e de negócio da aplicação.
 
 - São Paulo:
-  - $ 2.55 / mês
+  - $ 1.66 / mês
 - Norte Virgínia:
   - $ 1.48 / mês
 
