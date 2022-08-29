@@ -45,10 +45,6 @@ Dado todo cenário de recursos e custos envolvidos, para essa aplicação, estam
 
 Após a instalação do NodeJS e a conta AWS preparada para utilização, basta executar os comandos abaixo para iniciar o projeto.
 
-Criando a infraestrutura no CloudFormation:
-
-[Criar infraestrutura][infra-path]
-
 Clonando o repositório e entrando na pasta:
 
 ```sh
@@ -62,6 +58,11 @@ Instalando dependências e executando o projeto:
 yarn
 yarn start
 ```
+
+Criando a infraestrutura no CloudFormation:
+
+1. Inicie a crição da stack [clicando aqui][infra-path];
+2. Faça o upload do arquivo YML, que encontrase na pasta `/docs/iac/template.yml`.
 
 ## Variáveis de ambiente
 
@@ -104,4 +105,4 @@ Gustavo Mainchein – [@gugamainchein](https://twitter.com/dbader_org) – gusta
 [npm-url]: https://docs.npmjs.com/cli/v8
 [nodejs]: https://nodejs.org/en/
 [calc-aws]: https://calculator.aws/#/estimate?id=82b1ba2039c4ad90dd1930c3cbcf00f3f3b521cd
-[infra-path]: https://us-east-1.console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/create/review?templateURL=https://github.com/gugamainchein/cognito-casl/docs/iac/template.yml&stackName=cognito-casl
+[infra-path]: https://us-east-1.console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/create/template?stackName=cognito-casl
