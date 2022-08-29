@@ -1,0 +1,35 @@
+version: 0.2
+
+env:
+  parameter-store:
+    REACT_APP_IDENTITY_POOL_ID: /cognito/casl/REACT_APP_IDENTITY_POOL_ID
+    REACT_APP_AWS_REGION: /cognito/casl/REACT_APP_AWS_REGION
+    REACT_APP_USER_POOL_ID: /cognito/casl/REACT_APP_USER_POOL_ID
+    REACT_APP_USER_POOL_WEB_CLIENT_ID: /cognito/casl/REACT_APP_USER_POOL_WEB_CLIENT_ID
+    REACT_APP_COGNITO_DOMAIN: /cognito/casl/REACT_APP_COGNITO_DOMAIN
+    REACT_APP_WEB_CLIENT_REDIRECT_URL: /cognito/casl/REACT_APP_WEB_CLIENT_REDIRECT_URL
+
+phases:
+  install:
+    commands:
+      - npm install
+  build:
+    commands:
+      - echo "REACT_APP_IDENTITY_POOL_ID=${REACT_APP_IDENTITY_POOL_ID}" >> .env.production
+      - echo "REACT_APP_AWS_REGION=${REACT_APP_AWS_REGION}" >> .env.production
+      - echo "REACT_APP_USER_POOL_ID=${REACT_APP_USER_POOL_ID}" >> .env.production
+      - echo "REACT_APP_USER_POOL_WEB_CLIENT_ID=${REACT_APP_USER_POOL_WEB_CLIENT_ID}" >> .env.production
+      - echo "REACT_APP_COGNITO_DOMAIN=${REACT_APP_COGNITO_DOMAIN}" >> .env.production
+      - echo "REACT_APP_WEB_CLIENT_REDIRECT_URL=${REACT_APP_WEB_CLIENT_REDIRECT_URL}" >> .env.production
+    finally:
+      - echo env file created successfully
+  post_build:
+    commands:
+      - npm run build
+    finally:
+      - echo build performed successfully
+
+artifacts:
+  files:
+    - "**/*"
+  base-directory: build
