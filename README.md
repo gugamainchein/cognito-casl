@@ -99,7 +99,7 @@ Após a criação dos recursos da infraestrutura e a inicialização do projeto 
 
 ## Sobre o criador
 
-Gustavo Mainchein – [@gugamainchein](https://twitter.com/dbader_org) – gustavomainchein@outlook.com
+Gustavo Mainchein – [@gugamainchein](https://www.instagram.com/gugamainchein) – gustavomainchein@outlook.com
 
 [Veja mais sobre mim](https://github.com/gugamainchein)
 
