@@ -4,7 +4,7 @@ Existe muita dúvida de como gerenciar de forma eficiente os usuários das aplic
 
 Pensando nisso, construi uma aplicação template para que, a partir dele, você possa ter uma base de como sanar a maior parte desses dilemas e se preocupar com a regra de negócio que sua aplicação precisa executar.
 
-## Arquitetura do Projeto
+## Arquitetura do projeto
 
 Os principais recursos que irão nos apoiar no gerenciamento dos usuários de nossa aplicação são:
 
@@ -61,24 +61,30 @@ yarn start
 
 Criando a infraestrutura no CloudFormation:
 
-1. Inicie a crição da stack [clicando aqui][infra-path];
-2. Faça o upload do arquivo YML, que encontrase na pasta `/docs/iac/template.yml`.
+1. Inicie a criação da stack [clicando aqui][infra-path];
+2. Faça o upload do arquivo YML, que encontra-se na pasta `/docs/iac/template.yml`.
 
 ## Variáveis de ambiente
 
 Após a criação dos recursos da infraestrutura e a inicialização do projeto com sucesso, você está pronto para integrá-lo com os recursos de sua conta AWS, por meio do passo-a-passo abaixo:
 
 - REACT_APP_IDENTITY_POOL_ID:
+  ![Parâmetro env REACT_APP_IDENTITY_POOL_ID](https://github.com/gugamainchein/cognito-casl/blob/master/docs/environments/screen-identity-pool.jpeg?raw=true)
 
 - REACT_APP_AWS_REGION:
+  ![Parâmetro env REACT_APP_AWS_REGION](https://github.com/gugamainchein/cognito-casl/blob/master/docs/environments/screen-aws-region.jpeg?raw=true)
 
 - REACT_APP_USER_POOL_ID:
+  ![Parâmetro env REACT_APP_USER_POOL_ID](https://github.com/gugamainchein/cognito-casl/blob/master/docs/environments/screen-user-pool.jpeg?raw=true)
 
 - REACT_APP_USER_POOL_WEB_CLIENT_ID:
+  ![Parâmetro env REACT_APP_USER_POOL_WEB_CLIENT_ID](https://github.com/gugamainchein/cognito-casl/blob/master/docs/environments/screen-client-id.jpeg?raw=true)
 
 - REACT_APP_COGNITO_DOMAIN:
+  ![Parâmetro env REACT_APP_COGNITO_DOMAIN](https://github.com/gugamainchein/cognito-casl/blob/master/docs/environments/screen-cognito-domain.jpeg?raw=true)
 
 - REACT_APP_WEB_CLIENT_REDIRECT_URL:
+  ![Parâmetro env REACT_APP_WEB_CLIENT_REDIRECT_URL](https://github.com/gugamainchein/cognito-casl/blob/master/docs/environments/screen-client-redirect.jpeg?raw=true)
 
 ## Histórico de mudanças
 
