@@ -47,6 +47,8 @@ export const Login = () => {
   return (
     <AccessHeader
       funcToActionForm={(e) => signIn(e)}
+      registerShow={"Ou faça seu cadastro!"}
+      registerLink={"/create/user"}
       headText="Faça seu Login"
       buttonText="Login"
       boxForm={generateFormBlock()}

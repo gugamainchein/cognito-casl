@@ -1,14 +1,34 @@
-import { Flex, Heading, Stack, Box, Avatar, Button } from "@chakra-ui/react";
+import {
+  Flex,
+  Heading,
+  Stack,
+  Box,
+  Avatar,
+  Button,
+  Text,
+  Link,
+} from "@chakra-ui/react";
+import { useNavigate } from "react-router";
 
 type AppProps = {
   headText: string;
   buttonText: string;
   boxForm: any;
+  registerShow?: string;
+  registerLink?: string;
   funcToActionForm?: (e: any) => void;
 };
 
 export const AccessHeader = (props: AppProps) => {
-  const { headText, boxForm, buttonText, funcToActionForm } = props;
+  const {
+    headText,
+    boxForm,
+    buttonText,
+    funcToActionForm,
+    registerShow,
+    registerLink,
+  } = props;
+  const navigate = useNavigate();
 
   return (
     <Flex
@@ -45,6 +65,14 @@ export const AccessHeader = (props: AppProps) => {
               >
                 {buttonText}
               </Button>
+
+              {registerShow && registerLink ? (
+                <Link onClick={() => navigate(registerLink)}>
+                  <Text align="center">{registerShow}</Text>
+                </Link>
+              ) : (
+                ""
+              )}
             </Stack>
           </form>
         </Box>
