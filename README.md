@@ -1,8 +1,8 @@
 # Cognito & CASL
 
-Existe muita dúvida de como gerenciar de forma eficiente os usuários das aplicações, sem ser naquele arcaico e velho formato do banco de dados. Além disso, uma das grandes preocupações que permeia esse dilema de federação, baseia-se em como fazer isso sem expor credenciais de segurança.
+Existem muitas dúvidas sobre como gerenciar de forma eficiente os usuários das aplicações, sem ser aquele velho e antigo formato do banco de dados. Além disso, uma das grandes preocupações que permeia esse assunto, está relacionado a como fazer isso sem expor credenciais de segurança.
 
-Pensando nisso, construi uma aplicação template para que, a partir dele, você possa ter uma base de como sanar a maior parte desses dilemas e se preocupar com a regra de negócio que sua aplicação precisa executar.
+Pensando nisso, construimos uma aplicação template para que, a partir dela, você possa ter uma base de como resolver a maior parte desses dilemas e se preocupar com a regra de negócio que seu desenvolvimento precisa realizar.
 
 ## Arquitetura do projeto
 
