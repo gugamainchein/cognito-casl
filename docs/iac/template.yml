@@ -26,7 +26,6 @@ Resources:
         - preferred_username
       EmailConfiguration:
         EmailSendingAccount: COGNITO_DEFAULT
-      # MfaConfiguration: "OFF"
       Schema:
         - AttributeDataType: String
           Mutable: true
@@ -65,3 +64,29 @@ Resources:
         - COGNITO
       CallbackURLs:
         - http://localhost:3000
+
+  S3Bucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      AccessControl: PublicRead
+      BucketName: cognito-casl-front-end
+      VersioningConfiguration:
+        Status: Enabled
+      WebsiteConfiguration:
+        IndexDocument: index.html
+        ErrorDocument: error.html
+
+Outputs:
+  WebsiteURL:
+    Value: !GetAtt
+      - S3Bucket
+      - WebsiteURL
+    Description: URL for website hosted on S3
+  S3BucketSecureURL:
+    Value: !Join
+      - ""
+      - - "https://"
+        - !GetAtt
+          - S3Bucket
+          - DomainName
+    Description: Name of S3 bucket to hold website content
