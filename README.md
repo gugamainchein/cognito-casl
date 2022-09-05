@@ -92,6 +92,21 @@ Após a criação dos recursos da infraestrutura e a inicialização do projeto 
 
   ![Parâmetro env REACT_APP_WEB_CLIENT_REDIRECT_URL](https://github.com/gugamainchein/cognito-casl/blob/master/docs/environments/screen-client-redirect.jpeg?raw=true)
 
+## Sobre o permissionamento
+
+Para o gerenciamento das permissões dos usuários na aplicação, optamos por utilizar a biblioteca [CASL][casl-lib].
+
+Por conta da utilização desta lib, atente-se na alteração dos perfis no arquivo `/src/guards/ability.ts`, responsável por controlar todas as ações de cada grupo de usuários.
+
+No caso da nossa aplicação, permitimos apenas ações em usuários, conforme o trecho abaixo:
+
+```sh
+export type Action = "read" | "create" | "update" | "delete";
+export type Subject = "User";
+```
+
+Um último ponto importante salientar sobre esse mecanismo, é que é possível consultar essas ações de forma dinâmica, antes da aplicação iniciar. Isso permitiria que o controle da feature ficasse sobre responsabilidade do back-end.
+
 ## Histórico de mudanças
 
 - 0.0.1
@@ -118,3 +133,4 @@ Gustavo Mainchein – [@gugamainchein](https://www.instagram.com/gugamainchein) 
 [nodejs]: https://nodejs.org/en/
 [calc-aws]: https://calculator.aws/#/estimate?id=82b1ba2039c4ad90dd1930c3cbcf00f3f3b521cd
 [infra-path]: https://us-east-1.console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/create/template?stackName=cognito-casl
+[casl-lib]: https://casl.js.org/v6/en/guide/install

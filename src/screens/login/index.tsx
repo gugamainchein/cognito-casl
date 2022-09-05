@@ -1,11 +1,13 @@
 import { Auth } from "aws-amplify";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 import { AccessHeader } from "../components/AccessHeader";
 import { InputComponent } from "../components/InputComponent";
 // import { SendAlert } from "../components/SendAlert";
 
 export const Login = () => {
+  const navigate = useNavigate();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
@@ -14,10 +16,14 @@ export const Login = () => {
 
     try {
       const user = await Auth.signIn(username, password);
+      console.log(user);
 
       if (user?.signInUserSession?.idToken) {
-        localStorage.setItem("jwt", user.signInUserSession.idToken);
-        localStorage.setItem("email", user.attributes.email);
+        localStorage.setItem(
+          "group",
+          user.signInUserSession.idToken.payload["cognito:groups"]
+        );
+        navigate("/home");
       }
     } catch (error) {
       console.log("error:", error);

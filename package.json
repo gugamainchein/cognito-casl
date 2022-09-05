@@ -4,6 +4,9 @@
   "private": true,
   "dependencies": {
     "@aws-amplify/ui-react": "^3.4.1",
+    "@casl/ability": "^6.1.1",
+    "@casl/react": "^3.1.0",
+    "@chakra-ui/icons": "^2.0.9",
     "@chakra-ui/react": "^2.2.8",
     "@emotion/react": "^11.0.0",
     "@emotion/styled": "^11.0.0",
