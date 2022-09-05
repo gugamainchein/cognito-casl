@@ -107,10 +107,18 @@ export type Subject = "User";
 
 Um último ponto importante salientar sobre esse mecanismo, é que é possível consultar essas ações de forma dinâmica, antes da aplicação iniciar. Isso permitiria que o controle da feature ficasse sobre responsabilidade do back-end.
 
+Após realizar a alteração dos atribuitos no `ability.ts`, basta aplicar os métodos indicados na documentação do CASL, conforme exemplo abaixo:
+
+```sh
+export default ({ post }) => <Can I="read" this={post} field="title">
+  Yes, you can do this! ;)
+</Can>
+```
+
 ## Histórico de mudanças
 
-- 0.0.1
-  - Work in progress
+- 0.1.0
+  - Primeira versão da aplicação
 
 ## Sobre o criador
 
