@@ -9,6 +9,7 @@ import { Home } from "../screens/home";
 export const AppRoutes = () => {
   return (
     <Routes>
+      <Route path="/" element={<Login />} />
       <Route path="/login" element={<Login />} />
       <Route path="/recovery/password" element={<ForgotPass />} />
       <Route path="/change/password" element={<ChangePass />} />
