@@ -26,7 +26,7 @@ Os principais recursos que irão nos apoiar no gerenciamento dos usuários de no
 
 Veja a arquitetura abaixo para esclarecer as conexões entre os recursos:
 
-![Arquitetura AWS](https://github.com/gugamainchein/cognito-casl/blob/master/docs/arquitetura/arquitetura.png?raw=true)
+![Arquitetura AWS](https://github.com/gugamainchein/cognito-casl/blob/master/docs/architecture/architecture.png?raw=true)
 
 ## Custo envolvido
 
