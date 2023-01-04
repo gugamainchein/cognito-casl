@@ -1,6 +1,231 @@
 Description: Deployment of the Cognito application infrastructure
 
+Parameters:
+  CodeBuildEnvironmentComputeType:
+    Type: String
+    Default: BUILD_GENERAL1_SMALL
+    AllowedValues:
+      - BUILD_GENERAL1_SMALL
+      - BUILD_GENERAL1_MEDIUM
+      - BUILD_GENERAL1_LARGE
+
+  CodeBuildImage:
+    Description: The codebuild runtime image to use in the Codebuild project
+    Type: String
+    Default: "aws/codebuild/standard:2.0"
+
+  GitHubOAuthToken:
+    NoEcho: "true" # Do not display in CloudFormation
+    Type: String
+    Default: "" # Generate key on GitHub profile
+
+  GithubRepoOwner:
+    Description: The owner of the repository on GitHub
+    Type: String
+    Default: "gugamainchein"
+
+  GithubRepoBranch:
+    Description: The git branch that will be polled for changes
+    Type: String
+    Default: "master"
+
+  GithubRepo:
+    Description: The git repository base name
+    Type: String
+    Default: "cognito-casl"
+
 Resources:
+  # S3 Bucket where build artifacts and cache will be uploaded.
+  BuildArtifactBucket:
+    Type: AWS::S3::Bucket
+
+  # IAM role for codebuild project. Should give access all AWS resources needed by build and tests run by build.
+  CodeBuildRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action: sts:AssumeRole
+            Principal:
+              Service: codebuild.amazonaws.com
+      Policies:
+        - PolicyName: root
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              # Allow code build to stream logs
+              - Sid: CloudWatchLogsPolicy
+                Effect: Allow
+                Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                Resource: "*"
+
+  # IAM role for pipeline.
+  CodePipelineRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action: sts:AssumeRole
+            Principal:
+              Service: codepipeline.amazonaws.com
+      Policies:
+        - PolicyName: root
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Sid: S3AccessPolicy
+                Effect: Allow
+                Action:
+                  - S3:List*
+                  - s3:GetObject
+                  - s3:GetObjectVersion
+                  - s3:PutObject
+                  - s3:PutObjectAcl
+                Resource:
+                  - !Sub "arn:aws:s3:::${BuildArtifactBucket}"
+                  - !Sub "arn:aws:s3:::${BuildArtifactBucket}/*"
+              - Sid: CodeBuildAccessPolicy
+                Effect: Allow
+                Action:
+                  - codebuild:BatchGetBuilds
+                  - codebuild:StartBuild
+                Resource:
+                  - !GetAtt CodeBuildProjectDeploy.Arn
+              - Sid: EventsAccessPolicy
+                Effect: Allow
+                Action: events:PutEvents
+                Resource: "*"
+              - Effect: Allow
+                Action: iam:PassRole
+                Resource: "*"
+
+  ### Codebuild projects
+  CodeBuildProjectDeploy:
+    Type: AWS::CodeBuild::Project
+    Properties:
+      Name: !Sub "${AWS::StackName}-deploy"
+      Description: CodePipeline serverless deployer.
+      Source:
+        Type: CODEPIPELINE
+        BuildSpec: buildspec.yml
+      Artifacts:
+        Type: CODEPIPELINE
+      TimeoutInMinutes: 10
+      Environment:
+        ComputeType: !Ref CodeBuildEnvironmentComputeType
+        Image: !Ref CodeBuildImage
+        Type: LINUX_CONTAINER
+      ServiceRole: !GetAtt CodeBuildRole.Arn
+
+  # Pipeline for running build.
+  CodePipeline:
+    Type: AWS::CodePipeline::Pipeline
+    Properties:
+      Name: !Sub "${AWS::StackName}"
+      ArtifactStore:
+        Location: !Ref BuildArtifactBucket
+        Type: S3
+      RestartExecutionOnUpdate: false
+      RoleArn: !GetAtt CodePipelineRole.Arn
+      Stages:
+        - Name: Source
+          Actions:
+            - Name: Source
+              RunOrder: 1
+              ActionTypeId:
+                Category: Source
+                Owner: ThirdParty
+                Provider: GitHub
+                Version: "1"
+              Configuration:
+                Owner: !Ref GithubRepoOwner
+                Repo: !Ref GithubRepo
+                Branch: !Ref GithubRepoBranch
+                OAuthToken: !Ref GitHubOAuthToken
+              OutputArtifacts:
+                - Name: SourceOutput
+
+        - Name: Deploy
+          Actions:
+            - Name: Deploy
+              RunOrder: 1
+              ActionTypeId:
+                Category: Build
+                Owner: AWS
+                Provider: CodeBuild
+                Version: "1"
+              Configuration:
+                ProjectName: !Ref CodeBuildProjectDeploy
+              InputArtifacts:
+                - Name: SourceOutput
+
+  ### Notifications
+
+  # Failure notifications
+  CodePipelineStateFailureEventRule:
+    Type: "AWS::Events::Rule"
+    Properties:
+      Description: "Rule for sending failure notifications to SNS topic"
+      EventPattern:
+        source:
+          - aws.codepipeline
+        detail-type:
+          - CodePipeline Action Execution State Change
+        detail:
+          pipeline:
+            - !Ref CodePipeline
+          stage:
+            - Deploy
+            - Test
+            - Source
+          state:
+            - FAILED
+      State: "ENABLED"
+      Targets:
+        - Arn: !Sub "arn:aws:sns:${AWS::Region}:${AWS::AccountId}:CodebuildNotifications"
+          Id: "CodePipelineFailureNotifications"
+          InputTransformer:
+            InputTemplate: !Sub '"<stage> stage has <state> for <pipeline> pipeline! Pipeline view: https://console.aws.amazon.com/codesuite/codepipeline/pipelines/${AWS::StackName}/view"'
+            InputPathsMap:
+              pipeline: "$.detail.pipeline"
+              stage: "$.detail.stage"
+              state: "$.detail.state"
+
+  # Successful deployment notifications
+  CodePipelineSuccessfulDeployEventRule:
+    Type: "AWS::Events::Rule"
+    Properties:
+      Description: "Rule for sending failure notifications to SNS topic"
+      EventPattern:
+        source:
+          - aws.codepipeline
+        detail-type:
+          - CodePipeline Stage Execution State Change
+        detail:
+          pipeline:
+            - !Ref CodePipeline
+          stage:
+            - Deploy
+          state:
+            - SUCCEEDED
+      State: "ENABLED"
+      Targets:
+        - Arn: !Sub "arn:aws:sns:${AWS::Region}:${AWS::AccountId}:CodebuildNotifications"
+          Id: "CodePipelineSuccessfulDeployNotifications"
+          InputTransformer:
+            InputTemplate: !Sub '"<stage> stage has <state> for <pipeline> pipeline! Pipeline view: https://console.aws.amazon.com/codesuite/codepipeline/pipelines/${AWS::StackName}/view"'
+            InputPathsMap:
+              pipeline: "$.detail.pipeline"
+              stage: "$.detail.stage"
+              state: "$.detail.state"
+
   UserPool:
     Type: AWS::Cognito::UserPool
     Properties:
@@ -69,7 +294,7 @@ Resources:
     Type: AWS::S3::Bucket
     Properties:
       AccessControl: PublicRead
-      BucketName: cognito-casl-front-end
+      BucketName: cognito-casl-front-end-app
       VersioningConfiguration:
         Status: Enabled
       WebsiteConfiguration:
