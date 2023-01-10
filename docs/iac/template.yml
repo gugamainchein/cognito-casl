@@ -17,7 +17,7 @@ Parameters:
   GitHubOAuthToken:
     NoEcho: "true" # Do not display in CloudFormation
     Type: String
-    Default: "" # Generate key on GitHub profile
+    Default: "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" # Generate key on GitHub profile
 
   GithubRepoOwner:
     Description: The owner of the repository on GitHub
@@ -35,6 +35,13 @@ Parameters:
     Default: "cognito-casl"
 
 Resources:
+  ParameterOfIdentityPoolId:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Type: String
+      Name: /cognito/casl/REACT_APP_AWS_REGION
+      Value: ${aws:region}
+
   # S3 Bucket where build artifacts and cache will be uploaded.
   BuildArtifactBucket:
     Type: AWS::S3::Bucket
@@ -55,13 +62,21 @@ Resources:
           PolicyDocument:
             Version: "2012-10-17"
             Statement:
-              # Allow code build to stream logs
               - Sid: CloudWatchLogsPolicy
                 Effect: Allow
                 Action:
                   - logs:CreateLogGroup
                   - logs:CreateLogStream
                   - logs:PutLogEvents
+                Resource: "*"
+              - Sid: S3Policy
+                Effect: Allow
+                Action: s3:*
+                Resource: "*"
+              - Sid: SSMPolicy
+                Effect: Allow
+                Action:
+                  - ssm:GetParameters
                 Resource: "*"
 
   # IAM role for pipeline.
@@ -166,65 +181,16 @@ Resources:
               InputArtifacts:
                 - Name: SourceOutput
 
-  ### Notifications
-
-  # Failure notifications
-  CodePipelineStateFailureEventRule:
-    Type: "AWS::Events::Rule"
+  S3Bucket:
+    Type: AWS::S3::Bucket
     Properties:
-      Description: "Rule for sending failure notifications to SNS topic"
-      EventPattern:
-        source:
-          - aws.codepipeline
-        detail-type:
-          - CodePipeline Action Execution State Change
-        detail:
-          pipeline:
-            - !Ref CodePipeline
-          stage:
-            - Deploy
-            - Test
-            - Source
-          state:
-            - FAILED
-      State: "ENABLED"
-      Targets:
-        - Arn: !Sub "arn:aws:sns:${AWS::Region}:${AWS::AccountId}:CodebuildNotifications"
-          Id: "CodePipelineFailureNotifications"
-          InputTransformer:
-            InputTemplate: !Sub '"<stage> stage has <state> for <pipeline> pipeline! Pipeline view: https://console.aws.amazon.com/codesuite/codepipeline/pipelines/${AWS::StackName}/view"'
-            InputPathsMap:
-              pipeline: "$.detail.pipeline"
-              stage: "$.detail.stage"
-              state: "$.detail.state"
-
-  # Successful deployment notifications
-  CodePipelineSuccessfulDeployEventRule:
-    Type: "AWS::Events::Rule"
-    Properties:
-      Description: "Rule for sending failure notifications to SNS topic"
-      EventPattern:
-        source:
-          - aws.codepipeline
-        detail-type:
-          - CodePipeline Stage Execution State Change
-        detail:
-          pipeline:
-            - !Ref CodePipeline
-          stage:
-            - Deploy
-          state:
-            - SUCCEEDED
-      State: "ENABLED"
-      Targets:
-        - Arn: !Sub "arn:aws:sns:${AWS::Region}:${AWS::AccountId}:CodebuildNotifications"
-          Id: "CodePipelineSuccessfulDeployNotifications"
-          InputTransformer:
-            InputTemplate: !Sub '"<stage> stage has <state> for <pipeline> pipeline! Pipeline view: https://console.aws.amazon.com/codesuite/codepipeline/pipelines/${AWS::StackName}/view"'
-            InputPathsMap:
-              pipeline: "$.detail.pipeline"
-              stage: "$.detail.stage"
-              state: "$.detail.state"
+      AccessControl: PublicRead
+      BucketName: cognito-casl-front-end-app
+      VersioningConfiguration:
+        Status: Enabled
+      WebsiteConfiguration:
+        IndexDocument: index.html
+        ErrorDocument: error.html
 
   UserPool:
     Type: AWS::Cognito::UserPool
@@ -290,16 +256,40 @@ Resources:
       CallbackURLs:
         - http://localhost:3000
 
-  S3Bucket:
-    Type: AWS::S3::Bucket
+  # ParameterOfIdentityPoolId:
+  #   Type: AWS::SSM::Parameter
+  #   Properties:
+  #     Type: String
+  #     Name: /cognito/casl/REACT_APP_IDENTITY_POOL_ID
+  #     Value:
+
+  ParameterOfUserPoolId:
+    Type: AWS::SSM::Parameter
     Properties:
-      AccessControl: PublicRead
-      BucketName: cognito-casl-front-end-app
-      VersioningConfiguration:
-        Status: Enabled
-      WebsiteConfiguration:
-        IndexDocument: index.html
-        ErrorDocument: error.html
+      Type: String
+      Name: /cognito/casl/REACT_APP_USER_POOL_ID
+      Value: !Ref UserPool
+
+  ParameterOfWebClientId:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Type: String
+      Name: /cognito/casl/REACT_APP_USER_POOL_WEB_CLIENT_ID
+      Value: !Ref UserPoolClient
+
+  ParameterOfCognitoDomain:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Type: String
+      Name: /cognito/casl/REACT_APP_COGNITO_DOMAIN
+      Value: !GetAtt UserPool.ProviderURL
+
+  ParameterOfRedirectUrlDomain:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Type: String
+      Name: /cognito/casl/REACT_APP_WEB_CLIENT_REDIRECT_URL
+      Value: http://localhost:3000
 
 Outputs:
   WebsiteURL:
